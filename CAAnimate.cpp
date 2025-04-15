@@ -14,11 +14,15 @@ class CAAnimator : public emp::web::Animate
     const double width{num_w_boxes * RECT_SIDE};
     const double height{num_h_boxes * RECT_SIDE};
 
+    // state management values
+    const double life_value = 1.0;
+    const double dead_value = 0.0;
+
     // some vectors to hold information about the CA
-    std::vector<std::vector<float>> cells;
+    std::vector<std::vector<double>> cells;
 
     // some vectors to hold information about the next screen
-    std::vector<std::vector<float>> next;
+    std::vector<std::vector<double>> next;
 
     // where we'll draw
     emp::web::Canvas canvas{width, height, "canvas"};
@@ -33,17 +37,26 @@ public:
         doc << GetStepButton("Step");
 
         // fill the vectors with 1.0 (white=dead) to start
-        cells.resize(num_w_boxes, std::vector<float>(num_h_boxes, 1.0));
-        next.resize(num_w_boxes, std::vector<float>(num_h_boxes, 1.0));
+        cells.resize(num_w_boxes, std::vector<double>(num_h_boxes, dead_value));
+        next.resize(num_w_boxes, std::vector<double>(num_h_boxes, dead_value));
 
 
         // showing how to set a cell to 'alive'
-        cells[0][0] = 0.0;
-        cells[2][0] = 0.0;
-        cells[1][1] = 0.0;
-        cells[2][1] = 0.0;
-        cells[1][3] = 0.0;
+        cells[0][0] = life_value;
+        cells[2][0] = life_value;
+        cells[1][1] = life_value;
+        cells[2][1] = life_value;
+        cells[1][2] = life_value;
         
+    }
+
+    void BirthNext(int x, int y)
+    {
+        next[x][y] = life_value;
+    }
+    void FadeNext(int x, int y)
+    {
+        next[x][y] = emp::Max(dead_value, cells[x][y] - 0.1);
     }
 
     int NumLiveNeighbors(int x, int y)
@@ -57,7 +70,7 @@ public:
                     continue;
                 int neighborX = emp::Mod((x + i), num_w_boxes);
                 int neighborY = emp::Mod((y + j), num_h_boxes);
-                if (cells[neighborX][neighborY] == 0.0)
+                if (cells[neighborX][neighborY] == life_value)
                 {
                     count++;
                 }
@@ -70,11 +83,11 @@ public:
     {
         if (numLiveNeighbors == 3)
         {
-            next[x][y] = 0.0;
+            this->BirthNext(x, y);
         }
         else
         {
-            next[x][y] = std::min(1.0, cells[x][y] + 0.1);
+            this->FadeNext(x, y);
         }
     }
 
@@ -82,14 +95,14 @@ public:
     {
         if (numLiveNeighbors < 2 || numLiveNeighbors > 3)
         {
-            next[x][y] = cells[x][y] + 0.1;
+            this->FadeNext(x, y);
         }
     }
 
 
     void UpdateCell(int x, int y){
         int numLiveNeighbors = this->NumLiveNeighbors(x, y);
-        if (cells[x][y] == 0){
+        if (cells[x][y] == 1.0){
             this->UpdateLiveCell(x, y, numLiveNeighbors);
         }
         else{
@@ -117,17 +130,7 @@ public:
             for (int y = 0; y < num_h_boxes; y++)
             {
 
-                if (cells[x][y] == 0)
-                {
-                    // Draw a rectangle on the canvas filled with white and outlined in black
-                    canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, "white", "black");
-                    
-                }
-                else
-                {
-                    // Draw a rectangle filled with black
-                    canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, "black", "black");
-                }
+                canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, emp::ColorHSV(0, 0, cells[x][y]), "black");
                 this->UpdateCell(x,y);
             }
         }
