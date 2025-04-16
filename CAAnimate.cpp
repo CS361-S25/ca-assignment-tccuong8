@@ -182,12 +182,10 @@ public:
      * Returns nothing
      */
     void UpdateDeadCell(int x, int y, int numLiveNeighbors) {
-        if (numLiveNeighbors == 3)
-        {
+        if (numLiveNeighbors == 3) {
             this->BirthNext(x, y);
         }
-        else
-        {
+        else {
             this->FadeNext(x, y);
         }
     }
@@ -198,12 +196,10 @@ public:
      * Returns nothing
      */
     void UpdateLiveCell(int x, int y, int numLiveNeighbors) {
-        if (numLiveNeighbors < 2 || numLiveNeighbors > 3)
-        {
+        if (numLiveNeighbors < 2 || numLiveNeighbors > 3) {
             this->DieNext(x, y);
         }
-        else
-        {
+        else {
             this->StayNext(x, y);
         }
     }
@@ -216,12 +212,10 @@ public:
      */
     void UpdateCell(int x, int y) {
         int numLiveNeighbors = this->NumLiveNeighbors(x, y);
-        if (cells[x][y] == life_value)
-        {
+        if (cells[x][y] == life_value) {
             this->UpdateLiveCell(x, y, numLiveNeighbors);
         }
-        else
-        {
+        else {
             this->UpdateDeadCell(x, y, numLiveNeighbors);
         }
     }
