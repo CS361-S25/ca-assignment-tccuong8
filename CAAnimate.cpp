@@ -67,8 +67,7 @@ std::vector<std::tuple<int, int>> unnamed_ship {
     {30, 7}    
 };
 
-class CAAnimator : public emp::web::Animate
-{
+class CAAnimator : public emp::web::Animate {
 
     // grid management variables
     const int num_h_boxes = 40;
@@ -99,8 +98,7 @@ class CAAnimator : public emp::web::Animate
 
 public:
     // constructor
-    CAAnimator()
-    {
+    CAAnimator() {
         // shove canvas into the div
         // along with some control buttons
         doc << canvas;
@@ -122,8 +120,7 @@ public:
      * and sets the next state of the cell to be alive
      * Returns nothing
      */
-    void BirthNext(int x, int y)
-    {
+    void BirthNext(int x, int y) {
         next[x][y] = life_value;
     }
 
@@ -132,8 +129,7 @@ public:
      * and sets the next state of the cell to be half-dead (faded)
      * Returns nothing
      */
-    void DieNext(int x, int y)
-    {
+    void DieNext(int x, int y) {
         next[x][y] = fade_value;
     }
 
@@ -143,8 +139,7 @@ public:
      * keeping the value between 0 and 1 for canvas.Rect
      * Returns nothing
      */
-    void FadeNext(int x, int y)
-    {
+    void FadeNext(int x, int y) {
         next[x][y] = cells[x][y] + fade_increment;
         next[x][y] = emp::Max(0.0, emp::Min(next[x][y], 1.0));
     }
@@ -154,8 +149,7 @@ public:
      * and sets the next state of the cell to stay the same
      * Returns nothing
      */
-    void StayNext(int x, int y)
-    {
+    void StayNext(int x, int y) {
         next[x][y] = cells[x][y];
     }
 
@@ -165,19 +159,16 @@ public:
      * taking into account the toroidal spatial structure
      * Returns the number of live neighbors
      */
-    int NumLiveNeighbors(int x, int y)
-    {
+    int NumLiveNeighbors(int x, int y) {
         int count = 0;
-        for (int i = -1; i <= 1; i++)
-        {
-            for (int j = -1; j <= 1; j++)
-            {
-                if (i == 0 && j == 0)
-                    continue;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 && j == 0) continue;
+
                 int neighborX = emp::Mod((x + i), num_w_boxes);
                 int neighborY = emp::Mod((y + j), num_h_boxes);
-                if (cells[neighborX][neighborY] == life_value)
-                {
+
+                if (cells[neighborX][neighborY] == life_value) {
                     count++;
                 } 
             }
@@ -190,8 +181,7 @@ public:
      * and updates the next state of the cell based on the number of live neighbors
      * Returns nothing
      */
-    void UpdateDeadCell(int x, int y, int numLiveNeighbors)
-    {
+    void UpdateDeadCell(int x, int y, int numLiveNeighbors) {
         if (numLiveNeighbors == 3)
         {
             this->BirthNext(x, y);
@@ -207,8 +197,7 @@ public:
      * and updates the next state of the cell based on the number of live neighbors
      * Returns nothing
      */
-    void UpdateLiveCell(int x, int y, int numLiveNeighbors)
-    {
+    void UpdateLiveCell(int x, int y, int numLiveNeighbors) {
         if (numLiveNeighbors < 2 || numLiveNeighbors > 3)
         {
             this->DieNext(x, y);
@@ -225,8 +214,7 @@ public:
      * and updates the next state of the cell based on the number of live neighbors and the cell's own state
      * Returns nothing
      */
-    void UpdateCell(int x, int y)
-    {
+    void UpdateCell(int x, int y) {
         int numLiveNeighbors = this->NumLiveNeighbors(x, y);
         if (cells[x][y] == life_value)
         {
@@ -243,12 +231,9 @@ public:
      * Updates the state of the whole board based on the next state
      * Returns nothing
      */
-    void UpdateBoard()
-    {
-        for (int x = 0; x < num_w_boxes; x++)
-        {
-            for (int y = 0; y < num_h_boxes; y++)
-            {
+    void UpdateBoard() {
+        for (int x = 0; x < num_w_boxes; x++) {
+            for (int y = 0; y < num_h_boxes; y++) {
                 cells[x][y] = next[x][y];
             }
         }
@@ -261,15 +246,11 @@ public:
      * then updates the board based on the saved next states
      * Returns nothing
      */
-    void DoFrame() override
-    {
+    void DoFrame() override {
         canvas.Clear();
 
-        for (int x = 0; x < num_w_boxes; x++)
-        {
-            for (int y = 0; y < num_h_boxes; y++)
-            {
-
+        for (int x = 0; x < num_w_boxes; x++) {
+            for (int y = 0; y < num_h_boxes; y++) {
                 canvas.Rect(x * RECT_SIDE, y * RECT_SIDE, RECT_SIDE, RECT_SIDE, emp::ColorHSV(0, 0, cells[x][y]), "black");
                 this->UpdateCell(x, y);
             }
@@ -282,8 +263,7 @@ public:
 
 CAAnimator animator;
 
-int main()
-{
+int main() {
     // Have animator call DoFrame once to start
     animator.DoFrame();
 }
