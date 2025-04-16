@@ -7,3 +7,5 @@ This assignment is demostrating an unnamed c/2 orthogonal spaceship CA pattern, 
 'c/2' means that the pattern moves forward by one cell every 2 updates, also known as having a period of 2. 
 
 The [starting pattern](https://conwaylife.com/wiki/64P2H1V0) and [rules](https://conwaylife.com/wiki/Conway%27s_Game_of_Life) were written after consulting the [LifeWiki](https://conwaylife.com/wiki/Main_Page) website.
+
+There's also the option to switch to a basic [glider](https://anyaevostinar.github.io/CA-Assignment/) pattern, as well as the[Gosper glider gun](https:/playgameoflife.com/lexicon/Gosper_glider_gun) if desired.
